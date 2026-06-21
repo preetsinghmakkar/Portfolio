@@ -57,10 +57,9 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true },
   },
-  icons: {
-    icon: [{ url: '/favicon.ico?v=2', type: 'image/x-icon' }],
-    shortcut: [{ url: '/favicon.ico?v=2', type: 'image/x-icon' }],
-  },
+ icons: {
+  icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+},
 };
 
 export const viewport: Viewport = {
