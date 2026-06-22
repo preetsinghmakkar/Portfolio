@@ -35,7 +35,7 @@ function ContactTerminal() {
 
   return (
     <TerminalWindow title="session: encrypted_handshake">
-      <div className="space-y-2 text-[13px] min-h-[160px]">
+      <div className="space-y-2 text-[13px] min-h-40">
         {CONTACT_LINES.map((line, i) => {
           const displayed = displayedLines[i];
           if (!displayed && i > 0) return null;
@@ -49,7 +49,7 @@ function ContactTerminal() {
                 isLast
                   ? 'text-accent font-bold'
                   : isGreen
-                  ? 'text-[#9ca3af]'
+                  ? 'text-muted-2'
                   : 'text-accent'
               }
             >
@@ -65,7 +65,7 @@ function ContactTerminal() {
           <div className="mt-4 flex flex-wrap gap-3">
             <a
               href="mailto:preetsinghmakkar154@gmail.com"
-              className="flex items-center gap-2 rounded border border-white/10 px-4 py-2 font-mono text-xs text-[#9ca3af] transition-colors hover:border-accent/30 hover:text-white"
+              className="flex items-center gap-2 rounded border border-white/12 bg-white/4 px-4 py-2 font-mono text-xs font-bold tracking-widest text-muted-2 transition-all duration-200 hover:border-accent hover:bg-accent/8 hover:text-accent hover:shadow-[0_0_12px_rgba(0,255,102,0.15)]"
               aria-label="Send email"
             >
               <Mail className="h-3.5 w-3.5" />
@@ -75,7 +75,7 @@ function ContactTerminal() {
               href="https://www.linkedin.com/in/preet-singh-a65967302/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded border border-white/10 px-4 py-2 font-mono text-xs text-muted-2 transition-colors hover:border-accent/30 hover:text-white"
+              className="flex items-center gap-2 rounded border border-white/12 bg-white/4 px-4 py-2 font-mono text-xs font-bold tracking-widest text-muted-2 transition-all duration-200 hover:border-accent hover:bg-accent/8 hover:text-accent hover:shadow-[0_0_12px_rgba(0,255,102,0.15)]"
               aria-label="LinkedIn profile"
             >
               <ExternalLink className="h-3.5 w-3.5" />
@@ -85,7 +85,7 @@ function ContactTerminal() {
               href="https://github.com/preetsinghmakkar"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded border border-white/10 px-4 py-2 font-mono text-xs text-[#9ca3af] transition-colors hover:border-accent/30 hover:text-white"
+              className="flex items-center gap-2 rounded border border-white/12 bg-white/4 px-4 py-2 font-mono text-xs font-bold tracking-widest text-muted-2 transition-all duration-200 hover:border-accent hover:bg-accent/8 hover:text-accent hover:shadow-[0_0_12px_rgba(0,255,102,0.15)]"
               aria-label="GitHub profile"
             >
               <GitFork className="h-3.5 w-3.5" />
@@ -135,10 +135,10 @@ export function Contact() {
               {stats.map((s) => (
                 <div
                   key={s.label}
-                  className="rounded-lg border border-white/7 bg-[#0d0d0d] p-6 transition-colors hover:border-[rgba(0,255,102,0.15)]"
+                  className="rounded-lg border border-white/7 bg-surface p-6 transition-colors hover:border-border-green"
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <span className="font-mono text-[10px] tracking-widest text-[#6b7280]">
+                    <span className="font-mono text-[10px] tracking-widest text-muted">
                       {s.label}
                     </span>
                     <span className="text-accent text-lg">{s.icon}</span>
@@ -152,14 +152,14 @@ export function Contact() {
                 </div>
               ))}
 
-              <div className="rounded-lg border border-white/7 bg-[#0d0d0d] p-6">
+              <div className="rounded-lg border border-white/7 bg-surface p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="font-mono text-[10px] tracking-widest text-[#6b7280]">
+                  <span className="font-mono text-[10px] tracking-widest text-muted">
                     REGISTRY
                   </span>
                   <span className="text-accent text-sm">↗</span>
                 </div>
-                <p className="text-sm leading-6 text-[#9ca3af]">
+                <p className="text-sm leading-6 text-muted-2">
                   Currently accepting select high-impact projects in the Cosmos ecosystem. Priority
                   given to validator infrastructure, IBC integrations, and decentralised governance
                   solutions.

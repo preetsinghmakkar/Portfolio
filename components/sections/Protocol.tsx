@@ -1,14 +1,16 @@
 'use client';
 
+import Link from 'next/link';
 import { Reveal, Stagger, StaggerItem } from '@/components/ui/MotionWrapper';
 import { cn } from '@/lib/utils';
 
 const auditFindings = [
   {
+    slug: 'virtuals-protocol',
     protocol: 'Virtuals Protocol',
     logo: '/VirtualProtocol.webp',
     severity: 'HIGH',
-    platform: 'Sherlock',
+    platform: 'Code4rena',
     platformLogo: '/sherlock.svg',
     rootCause:
       'PublicContributionNft::mint was publicly callable with no access control, allowing any address to invoke it.',
@@ -16,10 +18,11 @@ const auditFindings = [
       'Attackers could mint arbitrary NFTs and manipulate contribution accounting, resulting in cascading fund loss throughout the protocol.',
   },
   {
+    slug: 'silo-finance',
     protocol: 'Silo Finance',
     logo: '/Silo.webp',
     severity: 'MEDIUM',
-    platform: 'Sherlock',
+    platform: 'Code4rena',
     platformLogo: '/sherlock.svg',
     rootCause:
       'deposit(), withdraw(), and redeem() lacked slippage protection and deadline validation parameters.',
@@ -27,10 +30,11 @@ const auditFindings = [
       'Users exposed to sandwich attacks and stale transaction execution at unfavorable prices.',
   },
   {
+    slug: 'liquid-ron',
     protocol: 'Liquid Ron',
     logo: '/Liquid.svg',
     severity: 'MEDIUM',
-    platform: 'Sherlock',
+    platform: 'Code4rena',
     platformLogo: '/sherlock.svg',
     rootCause:
       'Incorrect onlyOperator authorization logic used the wrong address for role comparison.',
@@ -38,26 +42,28 @@ const auditFindings = [
       'Authorized operators permanently blocked from executing critical protocol functionality, causing denial-of-service.',
   },
   {
+    slug: 'aegis-yusd',
     protocol: 'Aegis.im YUSD',
     logo: '/aegis.svg',
-    severity: 'MEDIUM',
-    platform: 'Cantina',
-    platformLogo: '/cantina.webp',
+    severity: 'HIGH',
+    platform: 'Sherlock',
+    platformLogo: '/sherlock.webp',
     rootCause:
-      'Shared asset accounting allowed multiple positions to draw against identical collateral simultaneously.',
+      '_untrackedAvailableAssetBalance is shared between approveRedeem and depositIncome with no earmarking — fund manager can consume redemption collateral to mint reward YUSD.',
     impact:
-      'Protocol insolvency through undercollateralization — bad debt accumulates silently with no liquidation trigger.',
+      'Pending redemptions fail with NotEnoughFunds while unbacked YUSD rewards are minted, violating the 1:1 redemption guarantee.',
   },
   {
+    slug: 'jigsaw-protocol',
     protocol: 'Jigsaw Protocol',
     logo: '/jigsaw.jpeg',
     severity: 'MEDIUM',
     platform: 'Cantina',
     platformLogo: '/cantina.webp',
     rootCause:
-      'Missing health-factor checks during repayment flow allowed positions to skip mandatory solvency validation.',
+      'liquidate() caps collateralUsed to the holding balance but never scales down the jUSD burned to match — liquidators burn more jUSD than the seized collateral is worth.',
     impact:
-      'Undercollateralized positions became permanently non-liquidatable, locking protocol bad debt with no recovery path.',
+      'Guaranteed liquidator loss on any undercollateralized position destroys the liquidation incentive, leaving bad debt permanently unresolved and the protocol insolvent.',
   },
 ];
 
@@ -68,10 +74,11 @@ function AuditCard({ finding }: { finding: Finding }) {
 
   return (
     <StaggerItem>
+      <Link href={`/audits/${finding.slug}`} className="block h-full">
       <div
         className={cn(
           'group relative flex h-full flex-col rounded-lg border border-white/7 bg-[#0d0d0d] p-6',
-          'transition-all duration-300 hover:border-white/14',
+          'transition-all duration-300 hover:border-white/14 cursor-pointer',
           isHigh && 'hover:shadow-[0_0_40px_rgba(0,255,102,0.04)]',
         )}
       >
@@ -139,7 +146,15 @@ function AuditCard({ finding }: { finding: Finding }) {
             {finding.impact}
           </p>
         </div>
+
+        {/* ── Footer ── */}
+        <div className="mt-5 flex items-center justify-end border-t border-white/6 pt-4">
+          <span className="font-mono text-[10px] tracking-widest text-[#6b7280] group-hover:text-accent transition-colors">
+            VIEW REPORT →
+          </span>
+        </div>
       </div>
+      </Link>
     </StaggerItem>
   );
 }

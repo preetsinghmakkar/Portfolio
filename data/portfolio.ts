@@ -186,7 +186,7 @@ export const projects: Project[] = [
       'Dutch-auction liquidation engine with collateral health monitoring',
       'ERC721 lender positions with epoch-based withdrawal queue protection',
     ],
-    github: 'https://github.com/RevvFi/revvfi-contracts',
+    github: 'https://github.com/RevvFi',
     status: 'PROTOCOL_ACTIVE',
     lang: 'Solidity',
     visibility: 'Public',
