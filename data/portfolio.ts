@@ -190,7 +190,7 @@ export const projects: Project[] = [
     status: 'PROTOCOL_ACTIVE',
     lang: 'Solidity',
     visibility: 'Public',
-    lastUpdated: 'Jun 2025',
+    lastUpdated: 'Jun 2026',
     flagship: true,
   },
   {
@@ -208,7 +208,7 @@ export const projects: Project[] = [
     status: 'CHAIN_ACTIVE',
     lang: 'Go',
     visibility: 'Public',
-    lastUpdated: 'May 2025',
+    lastUpdated: 'Jun 2026',
   },
   {
     name: 'TOKENMAKER',
