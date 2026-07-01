@@ -11,6 +11,7 @@ import { TechStack } from '@/components/sections/TechStack';
 import { Experience } from '@/components/sections/Experience';
 import { Projects } from '@/components/sections/Projects';
 import { Contact } from '@/components/sections/Contact';
+import { GitHubTelemetry } from '@/components/github/GitHubTelemetry';
 import { useCommandPalette } from '@/hooks/useCommandPalette';
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
         <TechStack />
         <Experience />
         <Projects />
+        <GitHubTelemetry />
         <Contact />
       </main>
 

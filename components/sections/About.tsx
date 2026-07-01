@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Reveal, Stagger, StaggerItem } from '@/components/ui/MotionWrapper';
+import { Reveal } from '@/components/ui/MotionWrapper';
 import { TerminalWindow } from '@/components/ui/TerminalWindow';
-import { Shield, Cpu, Network } from 'lucide-react';
 
 // ─── Actual vesper-interchaind startup logs ───────────────────────────────────
 
@@ -86,7 +85,7 @@ function renderLogLine(line: string, idx: number) {
   // Command line (starts with >)
   if (line.startsWith('>')) {
     return (
-      <div key={idx} className="flex items-center gap-1.5 mb-1">
+      <div key={idx} className="flex items-center gap-1.5 mb-1 whitespace-nowrap">
         <span className="text-accent font-bold">›</span>
         <span className="text-[#e2e8f0] font-semibold">{line.slice(2)}</span>
       </div>
@@ -96,7 +95,7 @@ function renderLogLine(line: string, idx: number) {
   // Structured log: "HH:MMam INF rest..."
   const header = line.match(/^(\d+:\d+[AP]M)\s+(INF|ERR|WRN|DBG)\s+(.*)$/);
   if (!header) {
-    return <div key={idx} className="text-[#6b7280] text-[11px]">{line}</div>;
+    return <div key={idx} className="whitespace-nowrap text-muted">{line}</div>;
   }
 
   const [, time, level, rest] = header;
@@ -142,10 +141,10 @@ function renderLogLine(line: string, idx: number) {
   const levelColor = level === 'INF' ? '#9ca3af' : level === 'ERR' ? '#f87171' : '#fbbf24';
 
   return (
-    <div key={idx} className="flex gap-2 leading-[1.6] min-w-0">
+    <div key={idx} className="flex gap-2 leading-[1.6] whitespace-nowrap">
       <span className="shrink-0 text-[#4b5563] tabular-nums">{time}</span>
       <span className="shrink-0 font-bold" style={{ color: levelColor }}>{level}</span>
-      <span className="break-all">{nodes}</span>
+      <span>{nodes}</span>
     </div>
   );
 }
@@ -186,46 +185,30 @@ function VesperLogTerminal() {
     <TerminalWindow title="vesper-interchaind start — github.com/Vesper-Interchain ↗">
       <div
         ref={scrollRef}
-        className="h-[480px] overflow-y-auto font-mono text-[11px] space-y-0.5 pr-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10"
+        className="h-75 sm:h-100 lg:h-120 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10"
       >
-        {VESPER_LOGS.slice(0, visibleLines).map((line, i) => renderLogLine(line, i))}
-        {!done && (
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-accent">›</span>
-            <span className="inline-block h-3 w-1.5 bg-accent animate-pulse" />
-          </div>
-        )}
-        {done && (
-          <div className="flex items-center gap-2 mt-2">
-            <span className="text-accent">›</span>
-            <span className="inline-block h-3 w-1.5 bg-accent animate-pulse" />
-          </div>
-        )}
+        {/* min-w-max keeps every line on a single row; horizontal scroll handles overflow */}
+        <div className="min-w-max space-y-0.5 font-mono text-[10px] sm:text-[11px] pr-4">
+          {VESPER_LOGS.slice(0, visibleLines).map((line, i) => renderLogLine(line, i))}
+          {!done && (
+            <div className="flex items-center gap-2 mt-1 whitespace-nowrap">
+              <span className="text-accent">›</span>
+              <span className="inline-block h-3 w-1.5 bg-accent animate-pulse" />
+            </div>
+          )}
+          {done && (
+            <div className="flex items-center gap-2 mt-2 whitespace-nowrap">
+              <span className="text-accent">›</span>
+              <span className="inline-block h-3 w-1.5 bg-accent animate-pulse" />
+            </div>
+          )}
+        </div>
       </div>
     </TerminalWindow>
     </a>
   );
 }
 
-// ─── Pillars ──────────────────────────────────────────────────────────────────
-
-const pillars = [
-  {
-    icon: Shield,
-    title: 'Security-First',
-    body: 'Security is a fundamental design principle. I focus on smart contract correctness through manual reviews, adversarial thinking, comprehensive testing, and advanced fuzzing methodologies.',
-  },
-  {
-    icon: Cpu,
-    title: 'Performance Engineering',
-    body: 'Developing decentralized systems across EVM and Cosmos ecosystems, with experience in Solidity, Foundry, Echidna, and Go-based blockchain development.',
-  },
-  {
-    icon: Network,
-    title: 'Interoperability',
-    body: 'Exploring and building interoperable blockchain infrastructure, focusing on secure communication, asset settlement, and next-generation decentralized protocols.',
-  },
-];
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
@@ -244,8 +227,8 @@ export function About() {
           </h2>
         </Reveal>
 
-        <div className="mt-16 grid gap-8 lg:grid-cols-2 lg:gap-16">
-          <Reveal delay={0.15} variant="slideRight">
+        <div className="mt-16 grid gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-[5fr_8fr] lg:gap-12">
+          <Reveal delay={0.15} variant="slideRight" className="min-w-0">
             <div className="space-y-6 text-[#9ca3af] leading-7">
               <p>
                 I build secure and scalable blockchain systems across EVM and Cosmos ecosystems. From designing Solidity smart contracts and testing complex protocol logic to developing Cosmos SDK–based chains, I treat security, correctness, and decentralization as fundamental requirements.
@@ -259,25 +242,10 @@ export function About() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.25}>
+          <Reveal delay={0.25} className="min-w-0 overflow-hidden">
             <VesperLogTerminal />
           </Reveal>
         </div>
-
-        {/* Pillars */}
-        <Stagger className="mt-16 grid gap-5 sm:grid-cols-3">
-          {pillars.map(({ icon: Icon, title, body }) => (
-            <StaggerItem key={title} className="h-full">
-              <div className="group h-full rounded-lg border border-white/7 bg-[#0d0d0d] p-6 transition-all duration-300 hover:border-[rgba(0,255,102,0.2)] hover:bg-[rgba(0,255,102,0.03)]">
-                <Icon className="mb-4 h-5 w-5 text-accent" />
-                <h3 className="mb-2 font-mono text-xs font-bold tracking-widest text-white">
-                  {title.toUpperCase()}
-                </h3>
-                <p className="text-sm leading-6 text-[#6b7280]">{body}</p>
-              </div>
-            </StaggerItem>
-          ))}
-        </Stagger>
       </div>
     </section>
   );
