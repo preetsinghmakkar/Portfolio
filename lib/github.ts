@@ -1,4 +1,4 @@
-import type { GitHubData, ContributionWeek, LanguageData, RecentCommit, ActiveRepo } from '@/types/github'
+import type { GitHubData, ContributionWeek, LanguageData, RecentCommit } from '@/types/github'
 import { GITHUB_TELEMETRY_QUERY } from './githubQueries'
 
 const GITHUB_GRAPHQL = 'https://api.github.com/graphql'
@@ -18,7 +18,6 @@ interface RawRepo {
   forkCount: number
   isArchived: boolean
   pushedAt: string
-  owner: { login: string }
   defaultBranchRef: {
     name: string
     target: { history: { nodes: RawCommit[] } }
@@ -44,8 +43,6 @@ interface RawResponse {
       }
     }
   }
-  revvfi: { repositories: { nodes: RawRepo[] } } | null
-  vesperInterchain: { repositories: { nodes: RawRepo[] } } | null
 }
 
 function calculateStreaks(weeks: ContributionWeek[]) {
@@ -94,36 +91,6 @@ function getRecentCommits(repos: RawRepo[]): RecentCommit[] {
     .slice(0, 5)
 }
 
-const toActiveRepo = (r: RawRepo, featured: boolean): ActiveRepo => ({
-  name: r.name,
-  owner: r.owner.login,
-  url: r.url,
-  language: r.languages.edges[0]?.node.name ?? 'Unknown',
-  languageColor: r.languages.edges[0]?.node.color ?? '#6b7280',
-  stars: r.stargazerCount,
-  forks: r.forkCount,
-  pushedAt: r.pushedAt,
-  featured,
-})
-
-function getActiveRepos(orgRepos: RawRepo[], personalRepos: RawRepo[]): ActiveRepo[] {
-  const isMeaningful = (r: RawRepo) => !r.isArchived && r.name !== '.github' && r.languages.edges.length > 0
-
-  const featured = orgRepos
-    .filter(isMeaningful)
-    .sort((a, b) => new Date(b.pushedAt).getTime() - new Date(a.pushedAt).getTime())
-    .slice(0, 5)
-    .map(r => toActiveRepo(r, true))
-
-  const personal = personalRepos
-    .filter(isMeaningful)
-    .sort((a, b) => b.stargazerCount - a.stargazerCount || new Date(b.pushedAt).getTime() - new Date(a.pushedAt).getTime())
-    .slice(0, Math.max(0, 6 - featured.length))
-    .map(r => toActiveRepo(r, false))
-
-  return [...featured, ...personal]
-}
-
 export function createFallbackData(): GitHubData {
   return {
     weeks: [],
@@ -132,14 +99,13 @@ export function createFallbackData(): GitHubData {
       totalRepositories: 0, followers: 0, following: 0,
       totalStars: 0, totalForks: 0, pullRequests: 0, issues: 0,
       mostActiveRepo: '—', mostActiveRepoUrl: '#',
-      latestCommitMessage: 'Set GITHUB_TOKEN in .env.local to load live data',
+      latestCommitMessage: '—',
       latestCommitSha: '000000', latestCommitUrl: '#',
       latestPushDate: new Date().toISOString(), defaultBranch: 'main',
       apiLatency: 0, rateLimitRemaining: 0, rateLimitTotal: 5000,
     },
     languages: [],
     recentCommits: [],
-    activeRepos: [],
     fetchedAt: new Date().toISOString(),
   }
 }
@@ -176,12 +142,11 @@ export async function fetchGitHubData(): Promise<GitHubData> {
     const rateLimitRemaining: number = rateLimit?.remaining ?? 5000
     const rateLimitTotal: number = rateLimit?.limit ?? 5000
 
-    const { user, revvfi, vesperInterchain } = json.data as RawResponse
+    const { user } = json.data as RawResponse
     const { contributionsCollection, repositories } = user
     const { contributionCalendar, commitContributionsByRepository } = contributionsCollection
     const { weeks } = contributionCalendar
     const repos = repositories.nodes
-    const orgRepos = [...(revvfi?.repositories.nodes ?? []), ...(vesperInterchain?.repositories.nodes ?? [])]
 
     const { current: currentStreak, longest: longestStreak } = calculateStreaks(weeks)
     const totalStars = repos.reduce((s, r) => s + r.stargazerCount, 0)
@@ -212,7 +177,6 @@ export async function fetchGitHubData(): Promise<GitHubData> {
       },
       languages: aggregateLanguages(repos),
       recentCommits: getRecentCommits(repos),
-      activeRepos: getActiveRepos(orgRepos, repos),
       fetchedAt: now.toISOString(),
     }
   } catch (err) {

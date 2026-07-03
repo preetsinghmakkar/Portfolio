@@ -30,18 +30,6 @@ export interface RecentCommit {
   sha: string
 }
 
-export interface ActiveRepo {
-  name: string
-  owner: string
-  url: string
-  language: string
-  languageColor: string
-  stars: number
-  forks: number
-  pushedAt: string
-  featured: boolean
-}
-
 export interface GitHubMetrics {
   totalContributions: number
   currentStreak: number
@@ -71,6 +59,5 @@ export interface GitHubData {
   metrics: GitHubMetrics
   languages: LanguageData[]
   recentCommits: RecentCommit[]
-  activeRepos: ActiveRepo[]
   fetchedAt: string
 }

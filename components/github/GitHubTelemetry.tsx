@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { motion, animate, useMotionValue, useTransform, useInView } from 'framer-motion'
-import { ExternalLink, Star, GitFork } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { Reveal, Stagger, StaggerItem } from '@/components/ui/MotionWrapper'
-import type { GitHubData, GitHubMetrics, LanguageData, RecentCommit, ActiveRepo, ContributionWeek } from '@/types/github'
+import type { GitHubData, GitHubMetrics, LanguageData, RecentCommit, ContributionWeek } from '@/types/github'
 
 const Heatmap3D = dynamic(() => import('./Heatmap3D'), {
   ssr: false,
@@ -18,7 +18,7 @@ const Heatmap3D = dynamic(() => import('./Heatmap3D'), {
 
 // ── localStorage cache (60-min TTL, stale-while-revalidate at 30 min) ─────────
 
-const CACHE_KEY         = 'gh_telemetry_v3'
+const CACHE_KEY         = 'gh_telemetry_v4'
 const CACHE_TTL_MS      = 60 * 60 * 1000   // hard expiry — force fresh fetch
 const CACHE_STALE_MS    = 30 * 60 * 1000   // soft expiry — serve stale, revalidate in background
 
@@ -399,69 +399,6 @@ function ContributionTimeline({ weeks }: { weeks: ContributionWeek[] }) {
   )
 }
 
-// ── Active repositories ────────────────────────────────────────────────────────
-
-function ActiveRepos({ repos }: { repos: ActiveRepo[] }) {
-  if (!repos.length) return null
-
-  return (
-    <div className="rounded-lg border border-white/7 bg-[#0d0d0d] p-6">
-      <p className="font-mono text-[9px] tracking-[0.18em] text-[#6b7280] uppercase mb-5">
-        ▸ Active Repositories
-      </p>
-      <div className="space-y-0">
-        {repos.map((repo, i) => (
-          <motion.div
-            key={repo.name}
-            initial={{ opacity: 0, x: -8 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: i * 0.07 }}
-          >
-            <a
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-between py-3 -mx-2 px-2 rounded-md transition-all hover:bg-white/4"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <span
-                  className="h-2 w-2 rounded-full shrink-0"
-                  style={{ background: repo.languageColor || '#6b7280' }}
-                />
-                <div className="min-w-0">
-                  <p className="font-mono text-[12px] font-bold text-white group-hover:text-accent transition-colors truncate">
-                    {repo.featured ? `${repo.owner}/${repo.name}` : repo.name}
-                  </p>
-                  <p className="font-mono text-[10px] text-[#6b7280]">
-                    {repo.language} · {relativeTime(repo.pushedAt)}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 shrink-0 ml-4 font-mono text-[10px] text-[#6b7280]">
-                {repo.featured && (
-                  <span className="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] tracking-wide text-accent">
-                    ORG
-                  </span>
-                )}
-                <span className="flex items-center gap-1">
-                  <Star className="h-3 w-3" />
-                  {repo.stars}
-                </span>
-                <span className="flex items-center gap-1">
-                  <GitFork className="h-3 w-3" />
-                  {repo.forks}
-                </span>
-              </div>
-            </a>
-            {i < repos.length - 1 && <div className="border-t border-white/4" />}
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 // ── Streak + follower stats card ───────────────────────────────────────────────
 
 function StatsCard({ metrics }: { metrics: GitHubMetrics }) {
@@ -503,9 +440,6 @@ function OfflineBanner() {
     <div className="rounded-xl border border-white/7 bg-[#0d0d0d] p-10 sm:p-16 text-center">
       <p className="font-mono text-[11px] tracking-widest text-[#4b5563] mb-2">OFFLINE MODE</p>
       <p className="font-mono text-sm text-[#6b7280]">Using cached engineering data.</p>
-      <p className="font-mono text-[10px] text-[#4b5563] mt-3">
-        Set <code className="text-accent">GITHUB_TOKEN</code> in <code className="text-[#9ca3af]">.env.local</code> for live data.
-      </p>
     </div>
   )
 }
@@ -647,13 +581,6 @@ export function GitHubTelemetry() {
                 <StatsCard metrics={data.metrics} />
               </StaggerItem>
             </Stagger>
-
-            {/* Row 3: Active repositories — full width */}
-            {data.activeRepos.length > 0 && (
-              <Reveal delay={0.1}>
-                <ActiveRepos repos={data.activeRepos} />
-              </Reveal>
-            )}
 
           </div>
         )}
