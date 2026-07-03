@@ -18,7 +18,7 @@ const Heatmap3D = dynamic(() => import('./Heatmap3D'), {
 
 // ── localStorage cache (60-min TTL, stale-while-revalidate at 30 min) ─────────
 
-const CACHE_KEY         = 'gh_telemetry_v2'
+const CACHE_KEY         = 'gh_telemetry_v3'
 const CACHE_TTL_MS      = 60 * 60 * 1000   // hard expiry — force fresh fetch
 const CACHE_STALE_MS    = 30 * 60 * 1000   // soft expiry — serve stale, revalidate in background
 
@@ -431,7 +431,7 @@ function ActiveRepos({ repos }: { repos: ActiveRepo[] }) {
                 />
                 <div className="min-w-0">
                   <p className="font-mono text-[12px] font-bold text-white group-hover:text-accent transition-colors truncate">
-                    {repo.name}
+                    {repo.featured ? `${repo.owner}/${repo.name}` : repo.name}
                   </p>
                   <p className="font-mono text-[10px] text-[#6b7280]">
                     {repo.language} · {relativeTime(repo.pushedAt)}
@@ -439,6 +439,11 @@ function ActiveRepos({ repos }: { repos: ActiveRepo[] }) {
                 </div>
               </div>
               <div className="flex items-center gap-3 shrink-0 ml-4 font-mono text-[10px] text-[#6b7280]">
+                {repo.featured && (
+                  <span className="rounded border border-accent/30 bg-accent/10 px-1.5 py-0.5 text-[9px] tracking-wide text-accent">
+                    ORG
+                  </span>
+                )}
                 <span className="flex items-center gap-1">
                   <Star className="h-3 w-3" />
                   {repo.stars}

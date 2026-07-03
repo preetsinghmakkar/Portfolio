@@ -32,12 +32,14 @@ export interface RecentCommit {
 
 export interface ActiveRepo {
   name: string
+  owner: string
   url: string
   language: string
   languageColor: string
   stars: number
   forks: number
   pushedAt: string
+  featured: boolean
 }
 
 export interface GitHubMetrics {

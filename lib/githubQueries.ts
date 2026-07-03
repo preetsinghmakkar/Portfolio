@@ -1,3 +1,34 @@
+const REPO_FIELDS = `
+  name
+  url
+  stargazerCount
+  forkCount
+  isArchived
+  pushedAt
+  owner { login }
+  defaultBranchRef {
+    name
+    target {
+      ... on Commit {
+        history(first: 2) {
+          nodes {
+            messageHeadline
+            committedDate
+            url
+            abbreviatedOid
+          }
+        }
+      }
+    }
+  }
+  languages(first: 8, orderBy: { field: SIZE, direction: DESC }) {
+    edges {
+      size
+      node { name color }
+    }
+  }
+`
+
 export const GITHUB_TELEMETRY_QUERY = `
   query GitHubTelemetry($username: String!, $from: DateTime!, $to: DateTime!) {
     rateLimit { limit remaining resetAt }
@@ -14,33 +45,7 @@ export const GITHUB_TELEMETRY_QUERY = `
       ) {
         totalCount
         nodes {
-          name
-          url
-          stargazerCount
-          forkCount
-          isArchived
-          pushedAt
-          defaultBranchRef {
-            name
-            target {
-              ... on Commit {
-                history(first: 2) {
-                  nodes {
-                    messageHeadline
-                    committedDate
-                    url
-                    abbreviatedOid
-                  }
-                }
-              }
-            }
-          }
-          languages(first: 8, orderBy: { field: SIZE, direction: DESC }) {
-            edges {
-              size
-              node { name color }
-            }
-          }
+          ${REPO_FIELDS}
         }
       }
       contributionsCollection(from: $from, to: $to) {
@@ -57,6 +62,20 @@ export const GITHUB_TELEMETRY_QUERY = `
               contributionLevel
             }
           }
+        }
+      }
+    }
+    revvfi: organization(login: "RevvFi") {
+      repositories(first: 20, privacy: PUBLIC, isFork: false, orderBy: { field: PUSHED_AT, direction: DESC }) {
+        nodes {
+          ${REPO_FIELDS}
+        }
+      }
+    }
+    vesperInterchain: organization(login: "Vesper-Interchain") {
+      repositories(first: 20, privacy: PUBLIC, isFork: false, orderBy: { field: PUSHED_AT, direction: DESC }) {
+        nodes {
+          ${REPO_FIELDS}
         }
       }
     }

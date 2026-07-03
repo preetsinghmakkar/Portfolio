@@ -115,7 +115,7 @@ export const experiences: ExperienceItem[] = [
     status: 'System status: ACTIVE. Contracts verified. Test coverage complete.',
   },
   {
-    period: 'FEB 2025 — AUG 2025',
+    period: 'FEB 2025 — JAN 2026',
     title: 'WEB3 SECURITY RESEARCHER',
     company: 'Code4rena · Cantina · Sherlock',
     tags: ['1 HIGH', '4 MEDIUM', '$391 EARNED'],
@@ -146,7 +146,7 @@ export const experiences: ExperienceItem[] = [
     status: 'Audit status: 1 High | 4 Medium | Rank #1593',
   },
   {
-    period: 'DEC 2024 — FEB 2025',
+    period: 'SEP 2024 — FEB 2025',
     title: 'FULL STACK BLOCKCHAIN ENGINEER',
     company: 'Ungate.io',
     tags: ['EVM', 'WALLETS', 'SECURITY', 'BACKEND'],
