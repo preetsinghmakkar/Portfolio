@@ -251,11 +251,6 @@ function MetricsPanel({ metrics }: { metrics: GitHubMetrics }) {
             </div>
           )}
         </div>
-        <div className="mt-4 border-l-2 border-accent/25 pl-3">
-          <p className="font-mono text-[10px] text-[#9ca3af] italic leading-relaxed line-clamp-2">
-            "{metrics.latestCommitMessage}"
-          </p>
-        </div>
       </div>
     </div>
   )
