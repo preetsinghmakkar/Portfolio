@@ -88,7 +88,7 @@ export const techCategories: TechCategory[] = [
 
 export const experiences: ExperienceItem[] = [
   {
-    period: '2025 — PRESENT',
+    period: 'Feb 2026 — PRESENT',
     title: 'SMART CONTRACT ENGINEER',
     company: 'iTechnolabs',
     tags: ['SOLIDITY', 'FOUNDRY', 'ERC4626', 'UUPS'],
